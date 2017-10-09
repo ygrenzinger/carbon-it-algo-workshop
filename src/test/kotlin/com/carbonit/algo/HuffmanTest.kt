@@ -3,7 +3,6 @@ package com.carbonit.algo
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.io.File
-import java.net.URL
 
 class HuffmanTest {
 
@@ -13,7 +12,7 @@ class HuffmanTest {
         val huffman = Huffman.of(text)
         val encodeIntoByteArray = huffman.encodeIntoByteArray(text)
         val file = File("encoded-text.txt")
-                file.createNewFile()
+        file.createNewFile()
         file.writeBytes(encodeIntoByteArray)
         assertThat(huffman.decode(encodeIntoByteArray)).isEqualTo(text)
         println()

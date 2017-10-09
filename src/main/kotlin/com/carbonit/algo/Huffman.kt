@@ -1,5 +1,6 @@
 package com.carbonit.algo
 
+import com.sun.jmx.remote.internal.ArrayQueue
 import java.util.*
 
 class Huffman(private val dictEncode: Map<String, String>) {
@@ -115,7 +116,8 @@ private interface HasFrequency {
 
 private sealed class HuffmanTree : HasFrequency {
     fun buildDictEncode(): Map<String, String> {
-        return buildDictEncode("", this)
+        //return buildDictEncode("", this)
+        return buildDictEncodeTC(LinkedList(Arrays.asList(Pair("", this))), mutableMapOf())
     }
 
     //for tailrec https://xor0110.wordpress.com/2014/12/31/tail-recursive-tree-traversal-example-in-scala/
@@ -125,6 +127,24 @@ private sealed class HuffmanTree : HasFrequency {
             is LeafHuffmanTree -> mapOf(huffmanTree.word to bitCode)
             else -> emptyMap()
         }
+    }
+
+    tailrec fun buildDictEncodeTC(queue: LinkedList<Pair<String, HuffmanTree>>, acc: MutableMap<String, String>) : Map<String, String> {
+        if (queue.isEmpty()) return acc
+
+        val elmt = queue.poll()
+        val tree = elmt.second
+        val bitCode = elmt.first
+        when (tree) {
+            is NodeHuffmanTree -> {
+                queue.add(Pair(bitCode + "0", tree.leftChild))
+                queue.add(Pair(bitCode + "1", tree.rightChild))
+            }
+            is LeafHuffmanTree -> {
+                acc.put(tree.word, bitCode)
+            }
+        }
+        return buildDictEncodeTC(queue, acc)
     }
 }
 
